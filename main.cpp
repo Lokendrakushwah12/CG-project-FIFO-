@@ -3,6 +3,11 @@
 using namespace std;
 
 int request[9] = { 0 }, counter[3] = { 0 }, pages[3] = { -1,-1,-1 }, fault[9] = { 0 }, colour[9] = { 1,1,1,1,1,1,1,1,1 }, pagecolour[3] = { 1,1,1 };
+float assign[9] = { -5.5,-5.5,-5.5,-5.5,-5.5,-5.5,-5.5,-5.5,-5.5 };
+int dest = 0, showresult = 0;
+int flag[3] = { 0,0,0 };
+int step = -1, startani = 0, faults = 0;
+char res[] = "Total page faults =  ";
 
 int main(int argc, char* argv[]){
 	glutInit(&argc, argv);

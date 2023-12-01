@@ -9,6 +9,14 @@ int flag[3] = { 0,0,0 };
 int step = -1, startani = 0, faults = 0;
 char res[] = "Total page faults =  ";
 
+void init(){							//Initializing the orthogonal space
+	glColor3f(0, 0, 0);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, 800, 0, 800);
+	glMatrixMode(GL_MODELVIEW);
+}
+
 int main(int argc, char* argv[]){
 	glutInit(&argc, argv);
     cout << "Enter a sequence of 9 numbers for page request\n";   //Asking for user input of page requests

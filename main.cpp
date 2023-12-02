@@ -17,6 +17,12 @@ void init(){							//Initializing the orthogonal space
 	glMatrixMode(GL_MODELVIEW);
 }
 
+int getLRU(){						//Returns the memory frame number that is least recently used
+	if (counter[0] >= counter[1] && counter[0] >= counter[2]) return 0;
+	if (counter[1] >= counter[0] && counter[1] >= counter[2]) return 1;
+	return 2;
+}
+
 int main(int argc, char* argv[]){
 	glutInit(&argc, argv);
     cout << "Enter a sequence of 9 numbers for page request\n";   //Asking for user input of page requests

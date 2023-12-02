@@ -1,5 +1,9 @@
-#include<iostream>
-#include<GL/glut.h>
+#include <iostream>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <GL/glut.h>
 using namespace std;
 
 int request[9] = { 0 }, counter[3] = { 0 }, pages[3] = { -1,-1,-1 }, fault[9] = { 0 }, colour[9] = { 1,1,1,1,1,1,1,1,1 }, pagecolour[3] = { 1,1,1 };
@@ -8,6 +12,10 @@ int dest = 0, showresult = 0;
 int flag[3] = { 0,0,0 };
 int step = -1, startani = 0, faults = 0;
 char res[] = "Total page faults =  ";
+float bgcolor[][3] = { { 1,0,0 },{ 0,1,0 },{ 0,0,1 } };                 //To choose background color from menu 
+int bgpointer = 0;
+float tilecolor[][3] = { { 1,1,0 },{ 1,0.7,0.7 },{ 0,1,1 },{1,0,1} };	//To choose tile and flag color from menu
+int tilepointer = 0;
 
 void init(){							//Initializing the orthogonal space
 	glColor3f(0, 0, 0);
@@ -42,6 +50,16 @@ void tile(float x, float y, char n){			//Draws the tiles representing page reque
 	glEnd();
 	glRasterPos2f(x - size / 2, y);
 	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, n);	//To draw the page number over the tile
+}
+
+void drawFlag(){						//Draws a flag in the shape of a small square whenever page fault occurs
+	glColor3fv(bgcolor[bgpointer]);
+	glBegin(GL_POLYGON);
+	glVertex2f(-10, -10);
+	glVertex2f(10, -10);
+	glVertex2f(10, 10);
+	glVertex2f(-10, 10);
+	glEnd();
 }
 
 int main(int argc, char* argv[]){

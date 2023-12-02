@@ -17,10 +17,31 @@ void init(){							//Initializing the orthogonal space
 	glMatrixMode(GL_MODELVIEW);
 }
 
-int getLRU(){						//Returns the memory frame number that is least recently used
+int getLRU(){						     //Returns the memory frame number that is least recently used
 	if (counter[0] >= counter[1] && counter[0] >= counter[2]) return 0;
 	if (counter[1] >= counter[0] && counter[1] >= counter[2]) return 1;
 	return 2;
+}
+
+void tile(float x, float y, char n){			//Draws the tiles representing page requests
+	float size = 20;
+    //glColor3f(1,1,0);
+    glBegin(GL_POLYGON);
+	glVertex2f(x - size, y - size);
+	glVertex2f(x + size, y - size);
+	glVertex2f(x + size, y + size);
+	glVertex2f(x - size, y + size);
+	glEnd();
+	glColor3f(0, 0, 0);
+	glLineWidth(2);
+	glBegin(GL_LINE_LOOP);						//Gives each tile a border
+    glVertex2f(x - size, y - size);
+	glVertex2f(x + size, y - size);
+	glVertex2f(x + size, y + size);
+	glVertex2f(x - size, y + size);
+	glEnd();
+	glRasterPos2f(x - size / 2, y);
+	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, n);	//To draw the page number over the tile
 }
 
 int main(int argc, char* argv[]){

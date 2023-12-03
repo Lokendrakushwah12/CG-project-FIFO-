@@ -62,6 +62,50 @@ void drawFlag(){						//Draws a flag in the shape of a small square whenever pag
 	glEnd();
 }
 
+void setupRequest(){		//Sets up the requested memory pages
+	glColor3fv(bgcolor[bgpointer]);
+	glBegin(GL_POLYGON);
+	glVertex2f(0, 0);
+	glVertex2f(700, 0);
+	glVertex2f(700, 100);
+	glVertex2f(0, 100);
+	glEnd();
+
+	glPushMatrix();
+	glTranslatef(-10, 40, 0);
+	for(int i = 0; i < 9; i++){			//A loop to set up the 9 tiles with page numbers on them
+		glColor3fv(tilecolor[tilepointer]);
+		glTranslatef(70, 0, 0);
+		glPushMatrix();
+
+		if(assign[i] > -4.5){			//Checks if the tile is within the tab of requests or not
+			glTranslatef(70 * step - 70 * i, 0, 0);
+		}
+
+		glTranslatef(0, -250 - 45 * assign[i], 0);		//Begins translation of the tile from original position to destination
+		
+		if((int)assign[i] == dest && assign[i] >= 0){
+			glColor3f(0, 0, 1);      //Colours the memory frame to be replaced with blue
+		}							
+		else{
+			glColor3fv(tilecolor[tilepointer]);
+		}
+
+		tile(10, 10, request[i] + '0');		//Calls the tile function to draw each tile
+		glPopMatrix();
+
+		if (fault[i]){					//Checks if a page fault has occurred at the time of processing the particular page request or not
+			glPushMatrix();
+			glTranslatef(0, -385, 0);
+			drawFlag();				//Draws a flag calling the drawFlag function
+			glPopMatrix();
+
+		}
+	}
+
+	glPopMatrix();
+}
+
 int main(int argc, char* argv[]){
 	glutInit(&argc, argv);
     cout << "Enter a sequence of 9 numbers for page request\n";   //Asking for user input of page requests

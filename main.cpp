@@ -106,344 +106,143 @@ void setupRequest(){		//Sets up the requested memory pages
 	glPopMatrix();
 }
 
-void drawText(const char *string, float x, float y, float z) //Function to display any wordings on the screen
-
-{																//at the given co-ordinates
-
+void drawText(const char *string, float x, float y, float z){ //Function to display any wordings on the screen at the given co-ordinates
 	const char *c;
-
 	glRasterPos3f(x, y, z);
-
-	for (c = string; *c != '\0'; c++)
-
-	{
-
+	for (c = string; *c != '\0'; c++){
 		if (*c == '\n')
-
 			glRasterPos3f(x, y - 0.05, z);
-
 		else
-
 			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);	//draws in the mentioned font type
-
 	}
-
 }
 
-
-
-
-
-void setup_pages()				//Sets up the memory frames with the page requests it contains
-
-								//at any point of time
-
-{
-
-
-
+void setup_pages(){				//Sets up the memory frames with the page requests it contains at any point of time
 	glPushMatrix();
-
-
-
 	tile(0, 0, pages[0] == 0 ? ' ' : pages[0] + '0');
-
 	glTranslatef(0, -45, 0);
-
-
-
 	tile(0, 0, pages[1] == 0 ? ' ' : pages[1] + '0');
-
 	glTranslatef(0, -45, 0);
-
-
-
 	tile(0, 0, pages[2] == 0 ? ' ' : pages[2] + '0');
-
 	glPopMatrix();
-
-
-
-
-
 }
 
 
 
 
 
-void display()
-
-{
-
+void display(){
 	glClear(GL_COLOR_BUFFER_BIT);
-
-
-
 	glLoadIdentity();
-
-
-
-
-
 	glPushMatrix();
-
 	glTranslatef(120 + 70 * step, 200, 0);	//Translates the set of memory frames based on the request being processed
-
 	setup_pages();							//Calls the function to draw the memory frames
-
 	glPopMatrix();
-
-
-
 	glColor3f(1, 1, 0);
-
-
-
 	glPushMatrix();
-
 	glTranslatef(50, 400, 0);
-
-	setup_request();					//Calls the function to draw the page requests
-
+	setupRequest();					//Calls the function to draw the page requests
 	glPopMatrix();
-
-
-
-
-
 	glEnd();
-
-
-
-
-
-	if (showresult && step == 8)		//Checks if all page requests have been processed
-
-	{
-
+	if (showresult && step == 8){		//Checks if all page requests have been processed
 		glColor3f(1, 1, 1);
-
 		res[21] = faults + '0';
-
 		drawText(res, 50, 20, 0);		//Displays the total number of faults that have occurred
-
 	}
-
-
-
 	drawText("VISUALIZING LRU / FIFO PAGE REPLACEMENT", 200, 550, 0);
-
 	drawText("(Press f/F for FIFO and Left Click for LRU)", 220, 520, 0);
-
-
-
 	glFlush();
-
 	glutSwapBuffers();
-
 }
 
 
 
-void idle()
-
-{
-
-
-
+void idle(){
 	if (!startani)
-
 		return;
-
-
-
 	if (dest > assign[step])
-
 		assign[step] += 0.01;		//Keeps incrementing the assign of step until it equals destination
-
-
-
-	if (dest <= assign[step])
-
-	{
-
+	if (dest <= assign[step]){
 		if (fault[step])
-
 			pages[dest] = request[step];   //places the requested page in the corresponding memory frame
-
 		startani = 0;
-
 		dest = -10;
-
 		showresult = 1;
-
 	}
-
-
-
 	display();
-
-
-
 }
 
 
 
 
 
-void mouse(int btn, int state, int x, int y)		//mouse event callback to implement LRU algorithm
-
-{
-
-
-
+void mouse(int btn, int state, int x, int y){		//mouse event callback to implement LRU algorithm
 	int n, i, j;
-
-
-
 	if (startani == 1)
-
 		return;
-
-
-
-	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN && step < 8)
-
-
-
-
-
-	{
-
-
-
+	if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN && step < 8){
 		if (step < 9)
-
 			step++;
-
-
-
-		for (i = 0; i < 3; i++)
-
-		{
-
-
-
-			if (request[step] == pages[i])			//Checks if the requested page is already in memory or not
-
-			{
-
+		for (i = 0; i < 3; i++){
+			if (request[step] == pages[i]){			//Checks if the requested page is already in memory or not
 				fault[step] = 0;					//No pagefault
-
 				counter[i] = 0;						//Makes counter of the frame 0
-
-
-
 				for (j = 0; j < 3; j++)
-
 					if (j != i) counter[j]++;		//Increments the counters of rest of the pages
-
 				dest = -5;
-
 				startani = 1;
-
 				colour[step] = 0;
-
 				glutPostRedisplay();				//Calls display function to redraw the changes
-
 				return;
-
-
-
 			}
-
-
-
-
-
-
-
 		}
-
-
-
-		n = getLRU();							//Implies page isnt in memory and fetches the frame to be replaced
-
-												//with the requested page
-
+		n = getLRU();							//Implies page isnt in memory and fetches the frame to be replaced with the requested page
 		counter[n] = 0;
-
 		for (i = 0; i < 3; i++)
-
 			if (i != n)
-
 				counter[i]++;
-
-
-
 		dest = n;
-
 		startani = 1;
-
-
-
 		fault[step] = 1;
-
 		faults++;							//Implies a page fault
-
-
-
-
-
-
-
 	}
-
-
-
 	glutPostRedisplay();					//Calls display function to redraw the changes
-
-
-
 }
 
 int getFIFO() {
-    if (step == 0) {
+    if (step == 0){
         flag[0] = 1;
         return 0;
-    } else {
-        if (flag[0] == 1) {
+    }
+	else{
+        if (flag[0] == 1){
             flag[0] = 0;
             flag[1] = 1;
             return 1;
-        } else if (flag[1] == 1) {
+        }
+		else if (flag[1] == 1){
             flag[1] = 0;
             flag[2] = 1;
             return 2;
-        } else if (flag[2] == 1) {
+        }
+		else if (flag[2] == 1){
             flag[2] = 0;
             flag[0] = 1;
             return 0;
         }
     }
-    // Add a default return statement here
-    return 0; // or any other appropriate value
+    return 0;
 }
 
-void mykey(unsigned char key, int x, int y)			//A keyboard event callback to implement LRU algorithm
-{
+void mykey(unsigned char key, int x, int y){			//A keyboard event callback to implement LRU algorithm
 	int n, i, j;
 	if (startani == 1)
 		return;
-	if ((key == 'f' || key == 'F') && step < 8)
-	{
+	if ((key == 'f' || key == 'F') && step < 8){
 		if (step < 9)
 			step++;
-		for (i = 0; i < 3; i++)
-		{
-			if (request[step] == pages[i])		//Checks if the requested page is already in memory or not
-			{
+		for (i = 0; i < 3; i++){
+			if (request[step] == pages[i]){		//Checks if the requested page is already in memory or not
 				fault[step] = 0;				//No pagefault
 				dest = -5;
 				startani = 1;
@@ -461,26 +260,22 @@ void mykey(unsigned char key, int x, int y)			//A keyboard event callback to imp
 	glutPostRedisplay();						//Calls display function to redraw the changes
 }
 
-void handle_bg_colour(int action)			//Submenu for changing background colour
-{
+void handle_bg_colour(int action){			//Submenu for changing background colour{
 	bgpointer = action;
 	glutPostRedisplay();
 }
 
-void handle_tile_colour(int action)			//Submenu for changing tile and flag colour
-{
+void handle_tile_colour(int action){			//Submenu for changing tile and flag colour
 	tilepointer = action;
 	glutPostRedisplay();
 }
 
-void menu(int action)
-{
+void menu(int action){
 	if (action == 0)
 		exit(0);
 }
 
-void addMenu()				//Menu and submenu implementation
-{
+void addMenu(){				//Menu and submenu implementation
 	int submenu1, submenu2;
 	submenu1 = glutCreateMenu(handle_bg_colour);			//Submenu for changing background colour of panel
 	glutAddMenuEntry("Red", 0);
@@ -501,19 +296,28 @@ void addMenu()				//Menu and submenu implementation
 int main(int argc, char* argv[]){
 	glutInit(&argc, argv);
     cout << "Enter a sequence of 9 numbers for page request\n";   //Asking for user input of page requests
-
 	for (int i = 0; i < 9; i++){
         cin >> request[i];
     }
-
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(800, 800);
     glutInitWindowPosition(100, 100);
     glutCreateWindow("Page Replacement");
     glClearColor(0.0, 0.0, 0.0, 0.0);   //Sets background colour of screen
-
+	glutDisplayFunc(display);
+	glutMouseFunc(mouse);
+	glutKeyboardFunc(mykey);
+	glutIdleFunc(idle);
+	glutMouseFunc(mouse);
+	glutKeyboardFunc(mykey);
+	glutIdleFunc(idle);
+	glEnable(GL_LIGHT3);
+	init();
+	addMenu();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
     gluOrtho2D(0, 800, 0, 800);			//Defines orthogonal space
+	glMatrixMode(GL_MODELVIEW);
     glutMainLoop();
-
     return 0;
 }
